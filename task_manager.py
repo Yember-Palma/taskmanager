@@ -5,7 +5,7 @@ class Task:
         self.completed = completed
     
     def __str__(self):
-        status = "✓" if self.completed else ""
+        status = "✓" if self.completed else " "
         return f"[{status}] #{self.id}: {self.description}"
 
 
@@ -17,10 +17,9 @@ class TaskManager:
 
     def add_task(self, description):
         task = Task(self._next_id, description)
-        self.tasks.append(task)
+        self._tasks.append(task)
         self._next_id += 1 
         print(f"Tarea añadida {description}")
-
 
     def list_task(self):
         if not self._tasks:
@@ -32,10 +31,10 @@ class TaskManager:
 
     def complete_task(self, id):
         for task in self._tasks:
-            task.completed == True
-            print(f"Tarea completada: {task}")
-            return
-        
+            if task.id == id:
+                task.completed == True
+                print(f"Tarea completada: {task}")
+                return
         print(f"Tarea no encontrada {id}")
 
 
@@ -45,7 +44,7 @@ class TaskManager:
                 self._tasks.remove(task)
                 print(f"Tarea eliminada: # {id}")
                 return
-            print(f"Tarea no encontrada: #{id}")
+        print(f"Tarea no encontrada: #{id}")
 
     
         
