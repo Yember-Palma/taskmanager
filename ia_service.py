@@ -26,12 +26,12 @@ Formato de respuesta:
 Responde solo con la lista de subtareas, una por linea, empezando cada linea con un guion."""
         
         params = {
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-5",
             "messages": [
                 {"role": "system", "content": "Eres un asistente experto en gestion de tareas que ayuda a dividir tareas complejas en pasos simples y accionables."},
                 {"role": "user", "content": prompt}
             ], 
-            "max_completion_tokens": 300,
+            "max_tokens": 300,
             "verbosity": "medium",
             "reasoning_effort": "minimal"
         }
