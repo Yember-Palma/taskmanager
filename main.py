@@ -1,19 +1,21 @@
 from task_manager import TaskManager
+from ia_service import create_simple_tasks
 
 def print_menu():
         print("\n---  Gestor de Tareas Inteligente ---")
         print("1. Añadir Tarea")
-        print("2. Listar Tarea")
-        print("3. Completar Tarea")
-        print("4. Eliminar Tarea")
-        print("5. Salir")
+        print("2. Añadir tarea compleja (con IA)")
+        print("3. Listar Tarea")
+        print("4. Completar Tarea")
+        print("5. Eliminar Tarea")
+        print("6. Salir")
 
 def main():
 
     manager = TaskManager()
 
     while True:
-
+        
         print_menu()
 
         try:
@@ -22,25 +24,35 @@ def main():
 
             match choice:
 
-                case "1":
+                case 1:
                     description = input("Descripcion de la tarea: ")
                     manager.add_task(description)
-                    
-                case "2":
+
+                case 2:
+                    description = input("Descripcion de tarea compleja: ")
+                    subtasks = create_simple_tasks(description)
+                    for subtask in subtasks:
+                        if not subtask.startswith("Error:"):
+                            manager.add_task(subtask)
+                        else:
+                            print(subtask)
+                            break
+                            
+                case 3:
                     manager.list_task()
 
-                case "3":
+                case 4:
                     id = int(input("ID de la tarea a completar: "))
                     manager.complete_task(id)
 
-                case "4":
-                    id = input("Id de la tarea a Eliminar: ")
+                case 5:
+                    id = int(input("Id de la tarea a Eliminar: "))
                     manager.delete_task(id)
 
-                case "5":
+                case 6:
                     print("Saliendo.....")
                     break
-
+                
                 case _:
                     print("Opcion no valida. Selecciona otra.")
 
