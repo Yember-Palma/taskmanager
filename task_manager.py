@@ -69,7 +69,10 @@ class TaskManager:
 
     def save_tasks(self):
         with open(self.FILENAME, "w") as file:
-            json.dump([{"id": task.id, "description": task.description, "completed": task.completed} for task in self._tasks], file, indent=4)
+            json.dump([{"id": task.id,
+                         "description": task.description, 
+                         "completed": task.completed} 
+                         for task in self._tasks], file, indent=4)
 
     
 

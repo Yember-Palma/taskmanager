@@ -1,57 +1,40 @@
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+from google import genai # Importación de la nueva librería google-genai
 
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# iniciamos nuestra variable con gemini
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def create_simple_tasks(description):
-
-    if not client.api_key:
-        return ["Error: La API key de OpenAi no esta configurada."]
-    
     try:
-
-        prompt = f"""Desglosa la siguiente tarea compleja de una lista de 3 a 5 subtareas simples y accionables.
-
-Tarea: {description}
-
-Formato de respuesta:
-- Subtarea 1
-- Subtarea 2
-- Subtarea 3
-- etc.
-
-Responde solo con la lista de subtareas, una por linea, empezando cada linea con un guion."""
+        # medelo de gemini
+        model_id = "gemini-2.5-flash" 
         
-        params = {
-            "model": "gpt-5",
-            "messages": [
-                {"role": "system", "content": "Eres un asistente experto en gestion de tareas que ayuda a dividir tareas complejas en pasos simples y accionables."},
-                {"role": "user", "content": prompt}
-            ], 
-            "max_tokens": 300,
-            "verbosity": "medium",
-            "reasoning_effort": "minimal"
-        }
+        prompt = f"""Desglosa la siguiente tarea en una lista de 3 a 5 subtareas simples:
+        Tarea: {description}
+        Responde solo la lista con guiones."""
 
-        response = client.chat.completions.create(**params)
+        # llamamos al modelo
+        response = client.models.generate_content(
+            model=model_id,
+            contents=prompt
+        )
+        
+        if not response.text:
+            return ["Error: El modelo no devolvió texto."]
 
-        content = response.choices[0].message.content.strip()
+        # Procesamos la respuesta
+        subtasks = [line.strip("- ").strip()
+                     for line in response.text.split("\n") 
+                     if "-" in line]
+        
+        return subtasks
 
-        subtasks = []
+    except Exception as e:
+        print(f"Error con el nuevo SDK: {e}")
+        return [f"Error de conexión: {str(e)}"]
 
-        for line in content.split("\n"):
-            line = line.strip()
-            if line and line.startswith("-"):
-                subtask = line[1:].strip()
-                if subtask:
-                    subtasks.append(subtask)
-
-        return subtasks if subtasks else ["Error: No se a podido generar las subtareas."]
-
-    
-    except Exception:
-        return ["Error: No se ha podido realizar la conexion a OpenAi."]
-
+# Ejemplo de uso
+# print(create_simple_tasks_gemini("Pintar la sala de la casa"))
